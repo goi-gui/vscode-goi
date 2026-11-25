@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import {
@@ -14,7 +15,7 @@ const INSTALL_COMMAND = 'go install github.com/goi-gui/goi/cmd/goipls@latest';
 let client: LanguageClient | undefined;
 let output: vscode.LogOutputChannel;
 let trace: vscode.LogOutputChannel;
-let starting: Promise<void> | undefined;
+let starting: Promise<boolean> | undefined;
 
 /**
  * Starts `goipls` for the open `.goi` files. The server is a Go binary rather
@@ -28,8 +29,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('goi.restartLanguageServer', async () => {
-			await restart();
-			void vscode.window.showInformationMessage('Goi language server restarted.');
+			if (await restart()) {
+				void vscode.window.showInformationMessage('Goi language server restarted.');
+			}
 		}),
 		vscode.commands.registerCommand('goi.showLanguageServerOutput', () => output.show(true)),
 	);
@@ -50,7 +52,7 @@ export async function deactivate(): Promise<void> {
 	await stop();
 }
 
-async function start(): Promise<void> {
+async function start(): Promise<boolean> {
 	if (starting) {
 		return starting;
 	}
@@ -60,7 +62,7 @@ async function start(): Promise<void> {
 	return starting;
 }
 
-async function startClient(): Promise<void> {
+async function startClient(): Promise<boolean> {
 	const config = vscode.workspace.getConfiguration('goi');
 	const command = config.get<string>('languageServer.path', 'goipls');
 	const args = config.get<string[]>('languageServer.args', []);
@@ -70,7 +72,7 @@ async function startClient(): Promise<void> {
 	if (!executable) {
 		output.warn(`goipls not found: ${command}`);
 		await offerInstallation(command);
-		return;
+		return false;
 	}
 
 	const serverOptions: ServerOptions = {
@@ -106,16 +108,18 @@ async function startClient(): Promise<void> {
 	try {
 		await running.start();
 		client = running;
+		return true;
 	} catch (error) {
 		output.error(`could not start goipls: ${String(error)}`);
 		await running.stop().catch(() => undefined);
 		await offerInstallation(command);
+		return false;
 	}
 }
 
-async function restart(): Promise<void> {
+async function restart(): Promise<boolean> {
 	await stop();
-	await start();
+	return start();
 }
 
 async function stop(): Promise<void> {
@@ -130,9 +134,13 @@ async function stop(): Promise<void> {
  * Resolves the configured command the way a shell would: an explicit path is
  * used as is, a bare name is searched on PATH (with PATHEXT on Windows).
  */
-function resolveExecutable(command: string, folder: string | undefined): string | undefined {
+function resolveExecutable(raw: string, folder: string | undefined): string | undefined {
+	let command = raw;
 	if (!command) {
 		return undefined;
+	}
+	if (command === '~' || command.startsWith('~/') || command.startsWith('~\\')) {
+		command = path.join(os.homedir(), command.slice(1));
 	}
 	if (command.includes('/') || command.includes('\\')) {
 		const resolved = path.isAbsolute(command) ? command : path.resolve(folder ?? '.', command);
