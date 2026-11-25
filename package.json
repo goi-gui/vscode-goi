@@ -2,7 +2,7 @@
 	"name": "goi",
 	"displayName": "Goi",
 	"description": "Goi design file (.goi) support: syntax highlighting, diagnostics, completion, hover, outline, formatting and go-to-definition.",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"publisher": "ksckaan1",
 	"license": "MIT",
 	"icon": "icons/icon.png",
