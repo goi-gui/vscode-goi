@@ -36,16 +36,21 @@ the full description of what `goipls` answers.
 
 ## Install
 
-From a VSIX (this checkout):
+From the [marketplace](https://marketplace.visualstudio.com/items?itemName=ksckaan1.goi):
+
+```sh
+code --install-extension ksckaan1.goi
+```
+
+Or from a VSIX built in this checkout:
 
 ```sh
 npm install
 npm run package
-code --install-extension goi-0.1.0.vsix
+code --install-extension goi-0.2.0.vsix
 ```
 
-Or install the extension from the marketplace once it is published, then
-install the language server once and keep it on `PATH`:
+Then install the language server once and keep it on `PATH`:
 
 ```sh
 go install github.com/goi-gui/goi/cmd/goipls@latest
