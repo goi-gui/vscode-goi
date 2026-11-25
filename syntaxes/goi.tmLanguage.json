@@ -1,0 +1,479 @@
+{
+  "name": "Goi",
+  "scopeName": "source.goi",
+  "fileTypes": [
+    "goi"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#imports"
+    },
+    {
+      "include": "#gradients"
+    },
+    {
+      "include": "#colors"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#declarations"
+    },
+    {
+      "include": "#loops"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#booleans"
+    },
+    {
+      "include": "#element-names"
+    },
+    {
+      "include": "#builtins"
+    },
+    {
+      "include": "#slots"
+    },
+    {
+      "include": "#handler-calls"
+    },
+    {
+      "include": "#namespaces"
+    },
+    {
+      "include": "#properties"
+    },
+    {
+      "include": "#event"
+    },
+    {
+      "include": "#identifiers"
+    },
+    {
+      "include": "#punctuation"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "match": "//.*$",
+          "name": "comment.line.double-slash.goi"
+        },
+        {
+          "begin": "/\\*",
+          "end": "\\*/",
+          "name": "comment.block.goi",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.goi"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.goi"
+            }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "begin": "!\"",
+          "end": "\"!",
+          "name": "string.quoted.block.goi",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.goi"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.goi"
+            }
+          }
+        },
+        {
+          "begin": "\"",
+          "end": "\"|\\n",
+          "name": "string.quoted.double.goi",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.goi"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.goi"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\\\\(?:[\"\\\\/bfnrt]|u\\{[0-9a-fA-F]{1,6}\\}|u[0-9a-fA-F]{4})",
+              "name": "constant.character.escape.goi"
+            }
+          ]
+        }
+      ]
+    },
+    "imports": {
+      "match": "\\b(import)\\s+(?:([A-Za-z_][A-Za-z0-9_]*)\\s+)?(\"(?:[^\"\\\\\\n]|\\\\.)*\")(\\s*;)?",
+      "captures": {
+        "1": {
+          "name": "keyword.control.import.goi"
+        },
+        "2": {
+          "name": "entity.name.type.goi"
+        },
+        "3": {
+          "name": "string.quoted.double.goi"
+        },
+        "4": {
+          "name": "punctuation.terminator.goi"
+        }
+      }
+    },
+    "gradients": {
+      "match": "\\b(linear-gradient|radial-gradient)(\\()([^()\"\\n]*)(\\))",
+      "captures": {
+        "1": {
+          "name": "support.function.gradient.goi"
+        },
+        "2": {
+          "name": "punctuation.section.function.begin.goi"
+        },
+        "3": {
+          "name": "string.special.goi"
+        },
+        "4": {
+          "name": "punctuation.section.function.end.goi"
+        }
+      }
+    },
+    "colors": {
+      "match": "#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\\b",
+      "name": "constant.other.color.goi"
+    },
+    "numbers": {
+      "match": "(?<![\\w.])-?\\d+(?:\\.\\d+)?(?:ms|s|deg|rad|turn|grad|%)?",
+      "name": "constant.numeric.goi"
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "begin": "\\b(type|data)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.goi"
+            },
+            "2": {
+              "name": "entity.name.type.goi"
+            },
+            "3": {
+              "name": "punctuation.section.block.begin.goi"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.block.end.goi"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#declaration-lines"
+            }
+          ]
+        },
+        {
+          "begin": "\\b(props|bridge|data)\\s*(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.goi"
+            },
+            "2": {
+              "name": "punctuation.section.block.begin.goi"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.block.end.goi"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#declaration-lines"
+            }
+          ]
+        }
+      ]
+    },
+    "declaration-lines": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "match": "^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s+(?=\\[\\]|map\\[|func\\(|[A-Za-z_])",
+          "captures": {
+            "1": {
+              "name": "variable.other.property.goi"
+            }
+          }
+        },
+        {
+          "match": "(?<=[{;,])\\s*([A-Za-z_][A-Za-z0-9_]*)\\s+(?=\\[\\]|map\\[|func\\(|[A-Za-z_])",
+          "captures": {
+            "1": {
+              "name": "variable.other.property.goi"
+            }
+          }
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "match": "\\b(func|map)\\b",
+          "name": "keyword.other.goi"
+        },
+        {
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+          "name": "entity.name.type.goi"
+        }
+      ]
+    },
+    "loops": {
+      "match": "\\b(for)\\s+([A-Za-z_][A-Za-z0-9_]*)(?:\\s*,\\s*([A-Za-z_][A-Za-z0-9_]*))?\\s*(:=)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.goi"
+        },
+        "2": {
+          "name": "variable.other.goi"
+        },
+        "3": {
+          "name": "variable.other.goi"
+        },
+        "4": {
+          "name": "keyword.operator.assignment.goi"
+        }
+      }
+    },
+    "keywords": {
+      "match": "\\b(?:import|func|if|else|for|range|switch|case|default|continue|break|responsive|conditional|state|map|none|inset|crossfade|wipe|linear|ease-in-out|ease-in|ease-out|ease|line-through|overline|underline)\\b",
+      "name": "keyword.other.goi"
+    },
+    "types": {
+      "match": "\\b(?:string|bool|int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|uintptr|byte|rune|float32|float64|complex64|complex128|any)\\b",
+      "name": "support.type.goi"
+    },
+    "booleans": {
+      "match": "\\b(?:true|false)\\b",
+      "name": "constant.language.boolean.goi"
+    },
+    "element-names": {
+      "match": "\\b([A-Z][A-Za-z0-9_]*)\\b(?=\\s*\\{)",
+      "name": "entity.name.type.goi"
+    },
+    "builtins": {
+      "match": "\\b(formatf|t|len|cap|min|max)\\b(?=\\s*\\()",
+      "name": "support.function.builtin.goi"
+    },
+    "slots": {
+      "match": "(\\$)([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.special.goi"
+        },
+        "2": {
+          "name": "variable.other.slot.goi"
+        }
+      }
+    },
+    "handler-calls": {
+      "patterns": [
+        {
+          "match": "\\b(bridge|data)(\\.)([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "support.type.namespace.goi"
+            },
+            "2": {
+              "name": "punctuation.accessor.goi"
+            },
+            "3": {
+              "name": "entity.name.function.goi"
+            }
+          }
+        },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)(\\.)([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "variable.other.goi"
+            },
+            "2": {
+              "name": "punctuation.accessor.goi"
+            },
+            "3": {
+              "name": "entity.name.function.goi"
+            }
+          }
+        }
+      ]
+    },
+    "namespaces": {
+      "patterns": [
+        {
+          "match": "\\b(props|bridge|data|app|window)(\\.)([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "support.type.namespace.goi"
+            },
+            "2": {
+              "name": "punctuation.accessor.goi"
+            },
+            "3": {
+              "name": "variable.other.property.goi"
+            }
+          }
+        },
+        {
+          "match": "\\b(theme|customColor)(\\.)([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "support.type.namespace.goi"
+            },
+            "2": {
+              "name": "punctuation.accessor.goi"
+            },
+            "3": {
+              "name": "constant.other.goi"
+            }
+          }
+        },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)(\\.)([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "variable.other.goi"
+            },
+            "2": {
+              "name": "punctuation.accessor.goi"
+            },
+            "3": {
+              "name": "variable.other.property.goi"
+            }
+          }
+        }
+      ]
+    },
+    "properties": {
+      "patterns": [
+        {
+          "match": "^\\s*(on[A-Z][A-Za-z0-9_]*)\\s*(?=:(?!:))",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.goi"
+            }
+          }
+        },
+        {
+          "match": "(?<=[{;,])\\s*(on[A-Z][A-Za-z0-9_]*)\\s*(?=:(?!:))",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.goi"
+            }
+          }
+        },
+        {
+          "match": "^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*(?=:(?!:))",
+          "captures": {
+            "1": {
+              "name": "entity.other.attribute-name.goi"
+            }
+          }
+        },
+        {
+          "match": "(?<=[{;,])\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*(?=:(?!:))",
+          "captures": {
+            "1": {
+              "name": "entity.other.attribute-name.goi"
+            }
+          }
+        }
+      ]
+    },
+    "event": {
+      "match": "\\bevent\\b",
+      "name": "variable.language.goi"
+    },
+    "identifiers": {
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+      "name": "constant.other.goi"
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "match": ":=|==|!=|<=|>=|&&|\\|\\||[-+*/%!?<>=]",
+          "name": "keyword.operator.goi"
+        },
+        {
+          "match": "\\{",
+          "name": "punctuation.section.block.begin.goi"
+        },
+        {
+          "match": "\\}",
+          "name": "punctuation.section.block.end.goi"
+        },
+        {
+          "match": "\\(",
+          "name": "punctuation.section.group.begin.goi"
+        },
+        {
+          "match": "\\)",
+          "name": "punctuation.section.group.end.goi"
+        },
+        {
+          "match": "\\[",
+          "name": "punctuation.section.brackets.begin.goi"
+        },
+        {
+          "match": "\\]",
+          "name": "punctuation.section.brackets.end.goi"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.goi"
+        },
+        {
+          "match": ";",
+          "name": "punctuation.terminator.goi"
+        },
+        {
+          "match": ":",
+          "name": "punctuation.separator.key-value.goi"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.accessor.goi"
+        }
+      ]
+    }
+  }
+}

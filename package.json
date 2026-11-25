@@ -1,0 +1,125 @@
+{
+  "name": "goi",
+  "displayName": "Goi",
+  "description": "Goi design file (.goi) support: syntax highlighting, diagnostics, completion, hover, outline, formatting and go-to-definition.",
+  "version": "0.1.0",
+  "publisher": "goi-gui",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/goi-gui/vscode-goi"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters"
+  ],
+  "keywords": [
+    "goi",
+    "goi-gui",
+    "gui",
+    "design",
+    "webgpu",
+    "go"
+  ],
+  "activationEvents": [
+    "onLanguage:goi"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "goi",
+        "aliases": [
+          "Goi",
+          "goi"
+        ],
+        "extensions": [
+          ".goi"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/goi.svg",
+          "dark": "./icons/goi.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "goi",
+        "scopeName": "source.goi",
+        "path": "./syntaxes/goi.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Goi",
+      "properties": {
+        "goi.languageServer.path": {
+          "type": "string",
+          "default": "goipls",
+          "markdownDescription": "Path to the `goipls` language server. A bare name is looked up on `PATH`; an absolute path is used as is."
+        },
+        "goi.languageServer.args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Extra arguments passed to `goipls`."
+        },
+        "goi.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Trace the communication between VS Code and the Goi language server."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[goi]": {
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+      }
+    },
+    "commands": [
+      {
+        "command": "goi.restartLanguageServer",
+        "title": "Restart Language Server",
+        "category": "Goi"
+      },
+      {
+        "command": "goi.showLanguageServerOutput",
+        "title": "Show Language Server Output",
+        "category": "Goi"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test:grammar": "node --test test/grammar.test.mjs",
+    "test": "npm run typecheck && npm run test:grammar",
+    "package": "npm run compile && npx @vscode/vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.2.0"
+  }
+}
