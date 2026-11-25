@@ -104,7 +104,7 @@ the icon, and no `node_modules`.
 ├── src/extension.ts              # starts goipls and restarts it on settings changes
 ├── syntaxes/goi.tmLanguage.json  # TextMate grammar for source.goi
 ├── language-configuration.json   # comments, brackets, indentation
-├── icons/goi.svg                 # language icon
+├── icons/                        # language icon (svg) and extension icon (png)
 └── test/grammar.test.mjs         # tokenizes a design and checks the scopes
 ```
 
