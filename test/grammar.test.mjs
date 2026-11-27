@@ -168,3 +168,35 @@ test('comments', () => {
 	const block = loaded.tokenizeLine('/* a note */', null).tokens;
 	assert.ok(block.every((t) => t.scopes.includes('comment.block.goi')));
 });
+
+test('setup body reads as Go', () => {
+	const source = [
+		'setup {',
+		'    var name = "Kaan"',
+		'    func greet(n string) string {',
+		'        return "Hi, " + n',
+		'    }',
+		'}',
+		'',
+		'Text { text: greet(name) }',
+	];
+	let stack = null;
+	const tokenized = source.map((line) => {
+		const result = loaded.tokenizeLine(line, stack);
+		stack = result.ruleStack;
+		return result.tokens;
+	});
+	const scopeOf = (line, text) => {
+		const index = line - 1;
+		const column = source[index].indexOf(text);
+		assert.notEqual(column, -1);
+		const token = tokenized[index].find((t) => t.startIndex <= column && column < t.endIndex);
+		assert.ok(token, `no token for ${JSON.stringify(text)}`);
+		return token.scopes;
+	};
+	for (const [line, word] of [[2, 'var'], [3, 'func'], [4, 'return']]) {
+		assert.ok(scopeOf(line, word).includes('keyword.control.go'), `${word} is not a Go keyword`);
+	}
+	assert.ok(scopeOf(3, 'string').includes('support.type.go'));
+	assert.ok(scopeOf(8, 'greet').includes('entity.name.function.goi'));
+});

@@ -24,6 +24,9 @@
       "include": "#numbers"
     },
     {
+      "include": "#setup"
+    },
+    {
       "include": "#declarations"
     },
     {
@@ -58,6 +61,9 @@
     },
     {
       "include": "#event"
+    },
+    {
+      "include": "#setup-calls"
     },
     {
       "include": "#identifiers"
@@ -474,6 +480,109 @@
           "name": "punctuation.accessor.goi"
         }
       ]
+    },
+    "setup": {
+      "begin": "\\b(setup)\\s*(\\{)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.goi"
+        },
+        "2": {
+          "name": "punctuation.section.block.begin.goi"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.block.end.goi"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#setup-brace"
+        },
+        {
+          "include": "source.go"
+        },
+        {
+          "include": "#setup-go"
+        }
+      ]
+    },
+    "setup-brace": {
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.block.begin.go"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.block.end.go"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#setup-brace"
+        },
+        {
+          "include": "source.go"
+        },
+        {
+          "include": "#setup-go"
+        }
+      ]
+    },
+    "setup-go": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "match": "`[^`]*`",
+          "name": "string.quoted.raw.go"
+        },
+        {
+          "match": "'(?:[^'\\\\\\n]|\\\\.)*'",
+          "name": "string.quoted.rune.go"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "match": "\\b(func|package|import|var|const|type|struct|interface|map|chan|go|defer|return|if|else|for|range|switch|case|default|break|continue|fallthrough|select|goto)\\b",
+          "name": "keyword.control.go"
+        },
+        {
+          "match": "\\b(string|bool|byte|rune|int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|uintptr|float32|float64|complex64|complex128|any|error)\\b",
+          "name": "support.type.go"
+        },
+        {
+          "match": "\\b(true|false|nil|iota)\\b",
+          "name": "constant.language.go"
+        },
+        {
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()",
+          "name": "support.function.go"
+        },
+        {
+          "match": "\\b\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\b",
+          "name": "constant.numeric.go"
+        },
+        {
+          "match": ":=|==|!=|<=|>=|&&|\\|\\||<<|>>|&\\^|[-+*/%!?<>=&|^~]",
+          "name": "keyword.operator.go"
+        }
+      ]
+    },
+    "setup-calls": {
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.goi"
+        }
+      }
     }
   }
 }
